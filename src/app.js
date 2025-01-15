@@ -1,26 +1,46 @@
 // main.js or app.js
-import express from 'express';
+import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser';
+import session from 'express-session'
 import configViewEngine from './configs/viewEngine.js';
-import indexRoutes from './routes/index.js';
-import bodyParser from 'body-parser';
-import'./db/init.mongodb.js'
+import IndexRouter from './routes/index.js';
 import path from "path";
+
 const __dirname = path.resolve()
 const app = express()
-app.set("view engine", "ejs")
+
+app.use(cookieParser());
+//config
+app.set('trust proxy', 1);
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+  },
+}));
+
 app.use(express.static(path.join(__dirname, "src", 'public'))); // Thư mục public nằm ở root
 app.set('views', path.join(process.cwd(), 'src/views'));
 
-configViewEngine(app);
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-app.use(indexRoutes)
+configViewEngine(app); //view engine
+app.use(express.urlencoded({ extend: true }));
+app.use(express.json());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://localhost:8080'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+app.use('/', new IndexRouter().getRouter());
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.log(err);
   if (process.env.NODE_ENV === 'pro') {
-    return res.render('404', {eventData: null});
+    return res.render('404', { eventData: null });
   } else {
     if (err) {
       console.error(err);
@@ -37,7 +57,5 @@ app.use((err, req, res, next) => {
     }
   }
 });
-
-// Start the server
 
 export default app

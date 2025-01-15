@@ -1,12 +1,9 @@
-import {model, Schema} from 'mongoose'
-const COLLECTION_NAME = 'Notes'
+import db from "../db/db.js";
 
-const noteSchema = new Schema(
-    {
-
+export default class Note {
+    constructor() {
+        this.schema = process.env.POSTGRES_SCHEMA;
+        this.tableName = 'note';
+        this.db = db(this.schema);
     }
-);
-
-const NoteModel = model(COLLECTION_NAME, noteSchema);
-
-export default NoteModel
+}

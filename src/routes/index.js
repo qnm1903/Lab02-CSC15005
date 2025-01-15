@@ -1,7 +1,20 @@
 'use strict'
 
-import express from 'express'
+import express from 'express';
+import NoteController from "../controllers/note.controller.js";
 
-const router = express.Router();
+export default class IndexRouter {
+    constructor() {
+        this.router = express.Router();
+        this.noteController = new NoteController();
+        this.initRoute();
+    }
 
-export default router;
+    initRoute() {
+        this.router.get('/', this.noteController.getLogin);
+    }
+
+    getRouter() {
+        return this.router;
+    }
+}
