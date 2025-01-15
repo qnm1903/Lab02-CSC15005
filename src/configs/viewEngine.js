@@ -8,7 +8,7 @@ import MongoStore from 'connect-mongo'
 const configViewEngine = (app) => {
     const __dirname = path.resolve()
     app.use(express.static('public')) // Giả sử file CSS nằm trong thư mục `public/css`
-    app.set('view engine', 'ejs')
+    app.set('view engine', 'handlebars')
     app.set('views', path.join(__dirname, 'src/views'))
 
     app.use(compression())
