@@ -1,12 +1,9 @@
-import { model, Schema } from 'mongoose'
-const COLLECTION_NAME = 'Users'
+import db from "../db/db.js";
 
-const userSchema = new Schema(
-    {
-
+export default class User {
+    constructor() {
+        this.schema = process.env.POSTGRES_SCHEMA;
+        this.tableName = 'user';
+        this.db = db(this.schema);
     }
-);
-
-const userModel = model(COLLECTION_NAME, userSchema);
-
-export default userModel
+}
