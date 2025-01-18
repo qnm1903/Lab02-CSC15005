@@ -34,7 +34,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
-app.use('/', new IndexRouter().getRouter());
+// app.use('/', new IndexRouter().getRouter());
+app.use(IndexRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

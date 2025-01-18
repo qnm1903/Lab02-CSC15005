@@ -2,19 +2,37 @@
 
 import express from 'express';
 import NoteController from "../controllers/note.controller.js";
+import UserController from '../controllers/user.controller.js';
+import APIRoutes from './api.router.js'
+import NoteRoutes from './note.router.js'
 
-export default class IndexRouter {
+class IndexRouter {
     constructor() {
         this.router = express.Router();
         this.noteController = new NoteController();
+        this.userController = new UserController();
+        this.noteRoutes = new NoteRoutes();
+        this.apiRoutes = new APIRoutes();
         this.initRoute();
     }
 
     initRoute() {
-        this.router.get('/', this.noteController.getLogin);
+        this.router.get('/', this.userController.getLogin);
+        this.router.use('/api', ApiRoutes);
+        this.router.use('/note', NoteRoutes);
     }
 
     getRouter() {
         return this.router;
     }
+
+    static getInstance() {
+        if(!this.instance) {
+            this.instance = new IndexRouter();
+        }
+
+        return this.instance;
+    }
 }
+
+export default IndexRouter.getInstance();
