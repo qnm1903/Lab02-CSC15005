@@ -4,8 +4,11 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import session from 'express-session'
 import configViewEngine from './configs/viewEngine.js';
-import IndexRouter from './routes/index.js';
 import path from "path";
+
+//Router
+import IndexRouter from './routes/index.js';
+import UserRouter from './routes/user.route.js';
 
 const __dirname = path.resolve()
 const app = express()
@@ -27,14 +30,19 @@ app.use(express.static(path.join(__dirname, "src", 'public'))); // Thư mục pu
 app.set('views', path.join(process.cwd(), 'src/views'));
 
 configViewEngine(app); //view engine
+
+//middleware
 app.use(express.urlencoded({ extend: true }));
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://localhost:8080'],
+  origin: ['http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+
+//Register to using Routers
 app.use('/', new IndexRouter().getRouter());
+app.use('/user', new UserRouter().getRouter());
 
 // Error handling middleware
 app.use((err, req, res, next) => {

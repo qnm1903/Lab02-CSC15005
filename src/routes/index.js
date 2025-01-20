@@ -13,7 +13,7 @@ export default class IndexRouter {
     }
 
     initRoute() {
-        this.router.get('/', this.userController.getLogin);
+        this.router.get('/', this.userController.getLoginRegister);
     }
 
     getRouter() {
