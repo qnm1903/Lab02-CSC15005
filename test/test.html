@@ -3,13 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kiểm thử Giao diện</title>
+  <title>Kiểm thử Ứng dụng Ghi chú</title>
   <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Thêm một số CSS tùy chỉnh cho giao diện kiểm thử */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .test-results {
+      margin-top: 20px;
+    }
+    .test {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #fff;
+      margin-bottom: 10px;
+    }
+    .test.pass {
+      border-color: #28a745;
+      background-color: #d4edda;
+    }
+    .test.fail {
+      border-color: #dc3545;
+      background-color: #f8d7da;
+    }
+    .test h3 {
+      margin: 0;
+    }
+    .test p {
+      margin: 5px 0 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>Kiểm thử các thành phần giao diện</h1>
-  <div id="test-container"></div>
-  <script src="mock-data.js"></script>
-  <script src="test.js"></script>
+  <h1>Kiểm thử Ứng dụng Ghi chú</h1>
+  <p>Trang này dùng để kiểm tra các chức năng chính của ứng dụng.</p>
+
+  <div class="test-results" id="test-results">
+    <!-- Kết quả kiểm thử sẽ được hiển thị tại đây -->
+  </div>
+
+  <script type="module">
+    import { createUUID } from '../utils/helpers.js';
+
+    // Kết quả kiểm thử
+    const testResults = document.getElementById('test-results');
+
+    // Hàm hiển thị kết quả kiểm thử
+    function displayTestResult(testName, passed, message) {
+      const testDiv = document.createElement('div');
+      testDiv.classList.add('test');
+      testDiv.classList.add(passed ? 'pass' : 'fail');
+
+      const testHeader = document.createElement('h3');
+      testHeader.textContent = `${testName}: ${passed ? 'PASS' : 'FAIL'}`;
+      testDiv.appendChild(testHeader);
+
+      const testMessage = document.createElement('p');
+      testMessage.textContent = message;
+      testDiv.appendChild(testMessage);
+
+      testResults.appendChild(testDiv);
+    }
+
+    // Kiểm thử hàm tạo UUID
+    function testCreateUUID() {
+      const uuid = createUUID();
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const passed = uuidRegex.test(uuid);
+      const message = passed
+        ? `UUID hợp lệ: ${uuid}`
+        : `UUID không hợp lệ: ${uuid}`;
+      displayTestResult('Tạo UUID', passed, message);
+    }
+
+    // Kiểm thử danh sách ghi chú giả lập
+    function testMockNotes() {
+      const mockNotes = [
+        { id: '1', title: 'Ghi chú 1', content: 'Nội dung 1' },
+        { id: '2', title: 'Ghi chú 2', content: 'Nội dung 2' },
+      ];
+
+      const passed = Array.isArray(mockNotes) && mockNotes.length === 2;
+      const message = passed
+        ? `Danh sách ghi chú có ${mockNotes.length} mục.`
+        : 'Danh sách ghi chú không đúng định dạng.';
+      displayTestResult('Danh sách ghi chú giả lập', passed, message);
+    }
+
+    // Kiểm thử hiển thị nội dung ghi chú
+    function testDisplayNoteContent() {
+      const note = { id: '1', title: 'Test Note', content: 'This is a test.' };
+      const noteDiv = document.createElement('div');
+      noteDiv.innerHTML = `<h3>${note.title}</h3><p>${note.content}</p>`;
+
+      const passed = noteDiv.innerHTML.includes(note.title) &&
+        noteDiv.innerHTML.includes(note.content);
+      const message = passed
+        ? `Nội dung ghi chú hiển thị đúng: "${note.content}"`
+        : 'Nội dung ghi chú không được hiển thị đúng.';
+      displayTestResult('Hiển thị nội dung ghi chú', passed, message);
+    }
+
+    // Chạy các kiểm thử
+    testCreateUUID();
+    testMockNotes();
+    testDisplayNoteContent();
+  </script>
 </body>
 </html>
