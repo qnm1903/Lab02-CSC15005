@@ -29,20 +29,27 @@ export default class Note {
     };
 
     // Tạo ghi chú
-    createNote = async (title, content) => {
-        const query = `
-            INSERT INTO ${this.tableName} (title, content)
-            VALUES ($1, $2)
-            RETURNING *;
-        `;
-        const values = [title, content];
-    
+    createNote = async (note) => {
         try {
-            const { rows } = await this.db.query(query, values);
-            return rows[0];
-        } catch (err) {
-            console.error('Error creating note:', err);
-            throw err;
+            const res = await this.db.add(this.tableName, null, note);
+            if (!res.success) {
+                return { success: false, message: "Failed to add" };
+            }
+            return { success: true, message: "Added succesfully" };
+        } catch (error) {
+            return { success: false, message: error.message };
         }
     };
+
+    deleteNote = async (condition) => {
+        try {
+            const res = await this.db.delete(this.tableName, null, condition);
+            if (!res.success) {
+                return { success: false, message: "Failed to delete" };
+            }
+            return { success: true, message: "Deleted succesfully" };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    }
 }

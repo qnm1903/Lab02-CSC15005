@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ứng dụng Ghi chú</title>
+  <link rel="stylesheet" href="/src/public/css/note.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>Danh sách ghi chú</h2>
+      <ul id="note-list"></ul>
+      <label for="input-file" id="add-note-btn">+ Thêm ghi chú</label>
+      <input type="file" id="input-file" accept="application/pdf"> 
+    </div>
+    <div class="content">
+      <p id="placeholder">Chọn hoặc tạo ghi chú để xem nội dung</p>
+      <div id="note-content"></div>
+    </div>
+  </div>
+
+  <!-- Modal chia sẻ -->
+  <div class="modal" id="share-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-share">&times;</span>
+      <h3>Chia sẻ ghi chú</h3>
+      <p id="share-note-title"></p>
+      <input placeholder="something" type="text" id="share-link" readonly>
+      <button id="copy-link-btn">Sao chép liên kết</button>
+    </div>
+  </div>
+
+  <!-- Modal xác nhận xóa -->
+  <div class="modal" id="delete-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-delete">&times;</span>
+      <h3>Xác nhận xóa</h3>
+      <p id="delete-note-title"></p>
+      <button id="confirm-delete-btn">Xóa</button>
+    </div>
+  </div>
+
+  <script src="/src/public/js/note.js"></script>
+</body>
+</html>

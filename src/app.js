@@ -35,7 +35,7 @@ app.use(cors({
   credentials: true,
 }));
 // app.use('/', new IndexRouter().getRouter());
-app.use(IndexRouter);
+app.use(IndexRouter.getRouter());
 
 // Error handling middleware
 app.use((err, req, res, next) => {

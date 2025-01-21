@@ -1,6 +1,4 @@
 import Note from "../models/note.model.js";
-import multer from 'multer';
-import v4 from 'uuid'
 
 export default class NoteController {
     constructor() {
@@ -8,7 +6,12 @@ export default class NoteController {
     }
 
     getNote = async (req, res) => {
-
+        try {
+            res.render('note');
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json("Internal Server Error");
+        }
     };
 
     getSharedNote = async (req, res) => {

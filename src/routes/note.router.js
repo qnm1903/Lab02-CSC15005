@@ -1,5 +1,5 @@
 import express from 'express'
-import NoteController from '../controllers/note.controller';
+import NoteController from '../controllers/note.controller.js';
 
 export default class APIRouter {
     constructor() {

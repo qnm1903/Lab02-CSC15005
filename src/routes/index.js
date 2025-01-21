@@ -18,8 +18,8 @@ class IndexRouter {
 
     initRoute() {
         this.router.get('/', this.userController.getLogin);
-        this.router.use('/api', ApiRoutes);
-        this.router.use('/note', NoteRoutes);
+        this.router.use('/api', this.apiRoutes.getRouter());
+        this.router.use('/note', this.noteRoutes.getRouter());
     }
 
     getRouter() {
