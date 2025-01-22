@@ -1,4 +1,5 @@
 const baseURL = 'http://localhost:3000'
+import auth from "./authClient.js";
 
 class api {
     constructor(baseURL) {
@@ -42,17 +43,18 @@ class api {
                 body: isFormData ? data : JSON.stringify(data)
             });
 
-            const result = await res.json()
+            const result = await res.json();
 
             if (!result.success) {
-                return { success: false, message: result.message };
+                return result;
             }
 
-            return { success: true, message: result.message };
+            return result;
         } catch (error) {
             return { success: false, message: 'Post request failed' };
         }
     }
+
 }
 
 export default new api(baseURL);
