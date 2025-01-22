@@ -13,9 +13,11 @@ export default class Note {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.tableName} (
                 id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-                userID SERIAL NOT NULL,
+                user_id SERIAL NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 content BYTEA NOT NULL,
+                salt TEXT NOT NULL,
+                iv TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
