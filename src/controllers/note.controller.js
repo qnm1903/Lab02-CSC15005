@@ -14,6 +14,10 @@ export default class NoteController {
         }
     };
 
+    createNote = async (req, res) => {
+
+    };
+
     getSharedNote = async (req, res) => {
         
     };

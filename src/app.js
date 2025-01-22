@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, "src", 'public'))); // Thư mục pu
 app.set('views', path.join(process.cwd(), 'src/views'));
 
 configViewEngine(app); //view engine
-app.use(express.urlencoded({ extend: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
   origin: ['http://localhost:3000', 'https://localhost:8080'],
@@ -35,7 +35,7 @@ app.use(cors({
   credentials: true,
 }));
 // app.use('/', new IndexRouter().getRouter());
-app.use(IndexRouter.getRouter());
+app.use('/', IndexRouter.getRouter());
 
 // Error handling middleware
 app.use((err, req, res, next) => {
