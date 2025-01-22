@@ -17,9 +17,10 @@ class IndexRouter {
     }
 
     initRoute() {
-        this.router.get('/', this.userController.getLogin);
+        this.router.get('/', this.userController.getLoginRegister);
         this.router.use('/api', this.apiRoutes.getRouter());
         this.router.use('/note', this.noteRoutes.getRouter());
+
     }
 
     getRouter() {
@@ -27,7 +28,7 @@ class IndexRouter {
     }
 
     static getInstance() {
-        if(!this.instance) {
+        if (!this.instance) {
             this.instance = new IndexRouter();
         }
 
