@@ -1,5 +1,6 @@
 import express from 'express'
 import NoteController from '../controllers/note.controller.js';
+import authenticate from '../middlewares/auth.js';
 
 export default class APIRouter {
     constructor() {
@@ -9,6 +10,7 @@ export default class APIRouter {
     }
 
     initRoute() {
+        this.router.use('/', authenticate);
         this.router.get('/:id', this.noteController.getNote);
         this.router.get('/share/:id', this.noteController.getSharedNote);
     }
