@@ -1,5 +1,6 @@
 import express from 'express'
 import NoteController from '../controllers/note.controller.js';
+import authenticate from '../middlewares/auth.js';
 import multer from 'multer'
 
 // Cấu hình Multer
@@ -13,6 +14,7 @@ export default class APIRoutes {
     }
 
     initRoute() {
+        this.router.use('/', authenticate);
         this.router.post('/upload', (req, res, next) => {
             upload.single('pdfFile')(req, res, (err) => {
               if (err) {

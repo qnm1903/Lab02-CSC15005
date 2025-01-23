@@ -1,0 +1,393 @@
+<body>
+    <h1>Page Notes</h1>
+    <div class="signContainer">
+        {{!-- login --}}
+        <div class="login form-container">
+            <form action="" class="form-login">
+                <h1>Login</h1>
+                <input type="text" name="username" class="username" placeholder="Username" required>
+                <input type="password" name="password" class="password" placeholder="Password" required>
+                <span class="err err-signIn" style="display: none;"></span>
+                <button type="submit" id="signIn-btn">
+                    Sign in
+                </button>
+            </form>
+        </div>
+
+        {{!-- register --}}
+        <div class="register form-container">
+            <form action="" class="form-register">
+                <h1>Register</h1>
+                <input type="text" name="name" class="name" placeholder="Full name" required>
+                <span class="err err-name" style="display: none;"></span>
+                <input type="text" name="email" class="email" placeholder="Email" required>
+                <span class="err err-email" style="display: none;"></span>
+                <input type="text" name="username" class="username" placeholder="Username" required>
+                <span class="err err-un" style="display: none;"></span>
+                <input type="password" name="password" class="password" placeholder="Password" required>
+                <span class="err err-pw" style="display: none;"></span>
+                <input type="password" name="confirm-password" class="confirm-password" placeholder="Confirm Password"
+                    required>
+                <span class="err err-cfpw" style="display: none;"></span>
+                <span class="err err-signUp" style="display: none;"></span>
+                <button type="submit" id="signUp-btn">
+                    Sign up
+                </button>
+            </form>
+        </div>
+
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome back</h1>
+                    <p>Enter your personal details</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello, friend</h1>
+                    <p>Register with your personal details</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import api from './utils/api.js'
+        $(document).ready(function () {
+            //Animation
+            const container = $('.signContainer');
+            const registerBtn = $('#register');
+            const loginBtn = $('#login');
+
+            registerBtn.click(function () {
+                container.addClass("active")
+            })
+
+            loginBtn.click(function () {
+                container.removeClass("active");
+            })
+
+            //Validation register name
+            $('.register .name').change(function () {
+                const regex = /[^a-zA-Z0-9\s]/;
+                const name = $(this).val();
+                if (regex.test(name)) {
+                    $('.err-name').show().html("Invalid Name!");
+                } else {
+                    $('.err-name').hide().html('');
+                }
+            })
+
+            //Validation register email
+            $('.register .email').change(function () {
+                const regex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,63}$/;
+                const email = $(this).val();
+
+                if (regex.test(email) || email === '') {
+                    $('.err-email').hide().html('');
+                } else {
+                    $('.err-email').show().html('Invalid email!');
+                }
+            })
+
+            //Validation register username
+            $('.register .username').change(function () {
+                const regex = /^[a-zA-Z0-9]{5,30}$/;
+                const username = $(this).val();
+
+                if (regex.test(username) || username === '') {
+                    $('.err-un').hide().html('');
+                } else {
+                    $('.err-un').show().html('Invalid username!');
+                }
+            })
+
+            //Validation register password
+            $('.register .password').change(function () {
+                const regex = /^.{2,30}$/;
+                const password = $(this).val();
+
+                if (regex.test(password) || password === '') {
+                    $('.err-pw').hide().html('');
+                } else {
+                    $('.err-pw').show().html('Invalid password!');
+                }
+            })
+
+            //Validation register confirm password
+            $('.register .confirm-password').change(function () {
+                const password = $('.register .password').val();
+                const checkPassword = $(this).val();
+                if (checkPassword !== password) {
+                    $('.err-cfpw').show().html('Incorrect confirm password');
+                } else {
+                    $('.err-cfpw').hide().html('');
+                }
+            })
+
+            //Register submit
+            $('.form-register').on('submit', async function (e) {
+                e.preventDefault();
+
+                const errName = $('.err-name').html();
+                const errEmail = $('.err-email').html();
+                const errUsername = $('.err-un').html();
+                const errPW = $('.err-pw').html();
+                const errCFPW = $('.err-cfpw').html();
+
+                if (errName || errEmail || errUsername || errPW || errCFPW) {
+                    $('.err-signUp').show();
+                    $('.err-signUp').html('Check your infomation and sign up again!');
+                }
+                else {
+                    const formData = {
+                        name: $('.register .name').val(),
+                        email: $('.register .email').val(),
+                        username: $('.register .username').val(),
+                        password: $('.register .password').val(),
+                    };
+
+                    const res = await api.post('/user/register', formData);
+                    if (!res.success) {
+                        $('.err-signUp').show().html(res.message).css({ color: 'red' });
+                    } else {
+                        $('.err-signUp').show().html(res.message).css({ color: '#AEEA94' });
+                    }
+                }
+            })
+
+            //Login submit
+            $('.form-login').on('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = {
+                    username: $('.login .username').val(),
+                    password: $('.login .password').val(),
+                }
+
+                const res = await api.post('/user/login', formData);
+                if (!res.success) {
+                    $('.err-signIn').show().html(res.message).css({ color: 'red' });
+                } else {
+                    window.location.href = res.redirectURL;
+                    $('.err-signIn').show().html(res.message).css({ color: '#AEEA94' });
+                }
+            })
+
+        })
+
+
+    </script>
+
+</body>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    .signContainer {
+        width: 100%;
+        background-color: white;
+        border-radius: 30px;
+        box-shadow: 0 5px 15px rgb(0, 0, 0, 0.35);
+        position: relative;
+        overflow: hidden;
+        width: 900px;
+        max-width: 100%;
+        min-height: 600px;
+        font-size: 1rem;
+        line-height: 20px;
+        margin: 20px 0;
+        padding: 20px;
+        display: flex;
+    }
+
+    .signContainer button {
+        background-color: lightgreen;
+        font-size: 1em;
+        padding: 5px 40px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        text-transform: uppercase;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .signContainer button.hidden {
+        background-color: cadetblue;
+    }
+
+    .signContainer button:hover {
+        opacity: 0.8;
+    }
+
+    .signContainer input {
+        background-color: #eee;
+        border: none;
+        width: 100%;
+        outline: none;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .signContainer form {
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 40px;
+        height: 100%;
+        gap: 20px;
+    }
+
+    .form-container {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .login {
+        left: 0;
+        width: 50%;
+        z-index: 2;
+        opacity: 1;
+    }
+
+    .signContainer.active .login {
+        transform: translateX(100%);
+        opacity: 0;
+        z-index: 1;
+        animation: move 0.6s;
+    }
+
+    .register {
+        left: 0;
+        width: 50%;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .signContainer.active .register {
+        opacity: 1;
+        transform: translateX(100%);
+        z-index: 2;
+        animation: move 0.6s;
+    }
+
+    @keyframes move {
+
+        0%,
+        49.99% {
+            opacity: 0;
+            z-index: 1;
+        }
+
+        50%,
+        100% {
+            opacity: 1;
+            z-index: 2;
+        }
+    }
+
+    .toggle-container {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: all 0.6s ease-in-out;
+        z-index: 1000;
+    }
+
+    .signContainer.active .toggle-container {
+        transform: translateX(-100%);
+    }
+
+    .toggle {
+        position: relative;
+        background-color: bisque;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+    }
+
+    .toggle button:hover {
+        background-color: cadetblue;
+        opacity: 0.8;
+    }
+
+    .signContainer.active .toggle {
+        transform: translate(50%);
+    }
+
+    .toggle-panel {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 30px;
+        text-align: center;
+        top: 0;
+        gap: 20px;
+    }
+
+    .toggle-left {
+        transform: translateX(-200%);
+    }
+
+    .signContainer.active .toggle-left {
+        transform: translateX(0);
+    }
+
+    .toggle-right {
+        right: 0;
+        transform: translateX(0);
+    }
+
+    .signContainer.active .toggle-right {
+        transform: translateX(200%);
+    }
+
+    .signContainer .err {
+        color: red;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .signContainer {
+            background-color: #AD49E1;
+        }
+
+        .signContainer form {
+            background-color: #AD49E1;
+        }
+
+        .signContainer input {
+            background-color: #2E073F;
+        }
+
+        .signContainer button {
+            background-color: #4B4376;
+        }
+
+        .toggle {
+            background-color: blueviolet;
+        }
+    }
+</style>

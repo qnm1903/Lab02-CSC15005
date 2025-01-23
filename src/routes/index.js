@@ -5,6 +5,7 @@ import NoteController from "../controllers/note.controller.js";
 import UserController from '../controllers/user.controller.js';
 import APIRoutes from './api.router.js'
 import NoteRoutes from './note.router.js'
+import authenticate from '../middlewares/auth.js';
 
 class IndexRouter {
     constructor() {
@@ -17,9 +18,10 @@ class IndexRouter {
     }
 
     initRoute() {
-        this.router.get('/', this.userController.getLogin);
+        this.router.get('/', this.userController.getLoginRegister);
         this.router.use('/api', this.apiRoutes.getRouter());
         this.router.use('/note', this.noteRoutes.getRouter());
+
     }
 
     getRouter() {
@@ -27,7 +29,7 @@ class IndexRouter {
     }
 
     static getInstance() {
-        if(!this.instance) {
+        if (!this.instance) {
             this.instance = new IndexRouter();
         }
 
