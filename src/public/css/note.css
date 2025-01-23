@@ -28,6 +28,7 @@ body {
 }
   
 .note-item {
+  color: #000;
   display: flex;
   justify-content: space-between;
   padding: 10px;
@@ -113,4 +114,8 @@ button:hover {
 
 #input-file {
   display: none;
+}
+
+#note-list-title {
+  color:#000;
 }

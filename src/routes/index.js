@@ -5,6 +5,7 @@ import NoteController from "../controllers/note.controller.js";
 import UserController from '../controllers/user.controller.js';
 import APIRoutes from './api.router.js'
 import NoteRoutes from './note.router.js'
+import authenticate from '../middlewares/auth.js';
 
 class IndexRouter {
     constructor() {

@@ -2,7 +2,7 @@ import express from 'express'
 import NoteController from '../controllers/note.controller.js';
 import authenticate from '../middlewares/auth.js';
 
-export default class APIRouter {
+export default class NoteRoutes {
     constructor() {
         this.router = express.Router();
         this.noteController = new NoteController();

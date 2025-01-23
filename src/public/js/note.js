@@ -68,14 +68,14 @@ closeDelete.addEventListener('click', () => (deleteModal.style.display = 'none')
 
 // Thêm sự kiện cho nút thêm ghi chú
 addNoteBtn.addEventListener('click', () => {
-  const newNote = {
-    id: Date.now(),
-    title: `Ghi chú mới`,
-    content: `Nội dung ghi chú mới`
-  };
-  notes.push(newNote);
-  displayNoteList();
-  displayNoteContent(newNote.id);
+  // const newNote = {
+  //   id: Date.now(),
+  //   title: `Ghi chú mới`,
+  //   content: `Nội dung ghi chú mới`
+  // };
+  // notes.push(newNote);
+  // displayNoteList();
+  // displayNoteContent(newNote.id);
 });
 
 // Hiển thị danh sách ghi chú khi tải trang
