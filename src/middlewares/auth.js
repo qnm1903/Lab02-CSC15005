@@ -7,8 +7,8 @@ const authenticate = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!token) {
-        if(!refreshToken) {
-            return res.status(401).json({ success: false, message: "No token provided" });
+        if (!refreshToken) {
+            return res.render('alert', { message: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại' });
         }
     }
 
@@ -37,11 +37,11 @@ const authenticate = async (req, res, next) => {
                 req.user = user;
                 next();
             } catch (refreshError) {
-                return res.status(403).json({ success: false, message: 'Invalid token' });
+                return res.render('alert', { message: 'Vui lòng đăng nhập trước' });
             }
         } else {
             // Token không hợp lệ hoặc lỗi khác
-            return res.status(401).json({ success: false, message: "Failed to refresh token" });
+            return res.render('alert', { message: 'Vui lòng đăng nhập trước' });
         }
     }
 }

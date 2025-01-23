@@ -5,6 +5,14 @@ export default class NoteController {
         this.userService = new UserService();
     }
 
+    getHome = async (req, res, next) => {
+        try {
+            res.redirect('/user/login-register');
+        } catch (error) {
+            next(error);
+        }
+    }
+
     getLoginRegister = async (req, res, next) => {
         try {
             res.render('login_register', {
@@ -42,7 +50,7 @@ export default class NoteController {
             return res.status(200).json({
                 success: "true",
                 message: serviceRes.message,
-                redirectURL: "/user/profile",
+                redirectURL: "/note/1",
             });
         } catch (error) {
             return res.status(400).json({ success: "false", message: error.message });

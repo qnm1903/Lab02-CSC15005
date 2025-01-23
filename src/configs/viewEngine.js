@@ -9,6 +9,7 @@ dotenv.config();
 
 const configViewEngine = (app) => {
     const __dirname = path.resolve()
+    app.use(compression())
     app.use(express.static('public')) // Giả sử file CSS nằm trong thư mục `public/css`
 
     // Cấu hình Handlebars
@@ -20,8 +21,6 @@ const configViewEngine = (app) => {
     }));
     app.set('view engine', 'hbs')
     app.set('views', path.join(__dirname, 'src/views'))
-
-    app.use(compression())
 
     // HTTP logger
     app.use(morgan('tiny'))

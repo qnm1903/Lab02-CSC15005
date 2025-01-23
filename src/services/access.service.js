@@ -1,7 +1,6 @@
 // Các hàm hỗ trợ access (Đăng nhập, đăng ký)
 'use strict'
 
-import express from 'express';
 import UserModel from "../models/user.model.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'

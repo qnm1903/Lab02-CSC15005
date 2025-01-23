@@ -2,7 +2,7 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
-import session from 'express-session'
+import session from 'express-session';
 import configViewEngine from './configs/viewEngine.js';
 import path from "path";
 
@@ -30,9 +30,7 @@ app.use(express.static(path.join(__dirname, "src", 'public'))); // Thư mục pu
 app.set('views', path.join(process.cwd(), 'src/views'));
 
 configViewEngine(app); //view engine
-
-//middleware
-app.use(express.urlencoded({ extend: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
   origin: ['http://localhost:3000'],
@@ -41,7 +39,7 @@ app.use(cors({
 }));
 
 //Register to using Routers
-app.use('/', new IndexRouter().getRouter());
+app.use('/', IndexRouter.getRouter());
 app.use('/user', new UserRouter().getRouter());
 
 // Error handling middleware
