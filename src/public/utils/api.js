@@ -1,5 +1,4 @@
 const baseURL = 'http://localhost:3000'
-import auth from "./authClient.js";
 
 class api {
     constructor(baseURL) {

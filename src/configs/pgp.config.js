@@ -12,7 +12,7 @@ const connection = {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
-    ssl: false,
+    ssl: { rejectUnauthorized: false }
 };
 
 const options = {
