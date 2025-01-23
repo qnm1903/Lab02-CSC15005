@@ -11,9 +11,9 @@ export default class NoteController {
             const token = req.cookies.token;
             const refreshToken = req.cookies.refreshToken;
             if(!token && !refreshToken) {
-                res.redirect('/user/login-register');
+                return res.redirect('/user/login-register');
             }
-            res.redirect('note/1');
+            return res.redirect('note/1');
         } catch (error) {
             next(error);
         }
@@ -35,7 +35,7 @@ export default class NoteController {
             const user = req.body;
             const serviceRes = await this.userService.login(user);
             if (!serviceRes.success) {
-                return res.status(401).json({ success: "false", message: serviceRes.message });
+                return res.status(401).json({ success: false, message: serviceRes.message });
             }
             // Lưu token vào cookie
             res.cookie("token", serviceRes.token, {
@@ -61,7 +61,7 @@ export default class NoteController {
                 user: JSON.stringify(userInfo),
             });
         } catch (error) {
-            return res.status(400).json({ success: "false", message: error.message });
+            return res.status(400).json({ success: false, message: error.message });
         }
     }
 
