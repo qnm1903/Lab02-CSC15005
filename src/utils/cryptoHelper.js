@@ -28,19 +28,30 @@ const decryptText = (encryptedText, key, iv, mode) => {
 
 // Hàm mã hóa file
 const encryptFile = (fileBuffer, sessionKey) => {
-    const iv = crypto.randomBytes(16); // Vector khởi tạo (IV)
-    const cipher = crypto.createCipheriv('aes-256-cbc', sessionKey, iv);
+    // const iv = crypto.randomBytes(16); // Vector khởi tạo (IV)
+    // const cipher = crypto.createCipheriv('aes-256-cbc', sessionKey, iv);
+    // const encryptedFile = Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
+    // return { encryptedFile, iv };
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', sessionKey, iv);
     const encryptedFile = Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
-    return { encryptedFile, iv };
+    const authTag = cipher.getAuthTag();
+  
+    return { encryptedFile, iv, authTag };
 };
 
-// Hàm giải mã file
-const decryptFile = (encryptedContent, iv, sessionKey) => {
-    const decipher = crypto.createDecipheriv('aes-256-cbc', sessionKey, Buffer.from(iv, 'hex'));
-    let decrypted = decipher.update(encryptedContent, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-}
+// Hàm giải mã file PDF bằng session key
+const decryptFile = (encryptedFile, sessionKey, iv, authTag) => {
+    // const decipher = crypto.createDecipheriv('aes-256-cbc', sessionKey, iv);
+    // const decryptedFile = Buffer.concat([decipher.update(encryptedFile), decipher.final()]);
+    // return decryptedFile;
+
+    const decipher = crypto.createDecipheriv('aes-256-gcm', sessionKey, iv);
+    decipher.setAuthTag(authTag);
+    const decryptedFile = Buffer.concat([decipher.update(encryptedFile), decipher.final()]);
+  
+    return decryptedFile;
+};
 
 export default {
     generateSessionKey,

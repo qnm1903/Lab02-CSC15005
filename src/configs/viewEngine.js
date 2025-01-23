@@ -4,6 +4,7 @@ import path from 'path'
 import compression from 'compression'
 import { engine } from 'express-handlebars'
 import dotenv from 'dotenv';
+import { stringify } from 'querystring'
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const configViewEngine = (app) => {
         defaultLayout: 'main',
         layoutsDir: path.join(__dirname, 'src/views/layouts'),
         partialsDir: path.join(__dirname, 'src/views/partials'),
+        helpers: {
+            json_stringify: function(context) {
+                return JSON.stringify(context);
+            }
+        }
     }));
     app.set('view engine', 'hbs')
     app.set('views', path.join(__dirname, 'src/views'))

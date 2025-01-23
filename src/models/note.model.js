@@ -31,6 +31,35 @@ export default class Note {
         }
     };
 
+    getNoteByID = async (id) => {
+        try {
+            return await this.db.one(this.tableName, "id", id);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    getNoteByUserID = async (user_id) => {
+        try {
+            return await this.db.one(this.tableName, "user_id", user_id);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    getNotesByUserID = async (user_id) => {
+        try {
+            const query = `
+                SELECT *
+                FROM "${this.schema}"."${this.tableName}"
+                WHERE "user_id" = $1
+            `;
+            return await this.db.native(query, [user_id]);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    }
+
     // Tạo ghi chú
     createNote = async (note) => {
         try {
