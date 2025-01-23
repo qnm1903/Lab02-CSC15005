@@ -103,6 +103,6 @@ export default class NoteController {
         res.clearCookie('token');
         res.clearCookie('refreshToken');
 
-        return res.status(200).json({success: true, message: 'Logged out succesfully'}); 
+        return res.redirect('/user/login-register');
     }
 }

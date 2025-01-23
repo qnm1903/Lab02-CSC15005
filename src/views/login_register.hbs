@@ -70,7 +70,7 @@
 
             //Validation register name
             $('.register .name').change(function () {
-                const regex = /[^a-zA-Z0-9\s]/;
+                const regex = /[0-9!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`']/;
                 const name = $(this).val();
                 if (regex.test(name)) {
                     $('.err-name').show().html("Invalid Name!");
