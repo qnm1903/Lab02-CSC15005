@@ -170,6 +170,7 @@
                 if (!res.success) {
                     $('.err-signIn').show().html(res.message).css({ color: 'red' });
                 } else {
+                    localStorage.setItem('user', res.user);
                     window.location.href = res.redirectURL;
                     $('.err-signIn').show().html(res.message).css({ color: '#AEEA94' });
                 }

@@ -1,3 +1,4 @@
+import { type } from "os";
 import UserService from "../services/access.service.js";
 
 export default class NoteController {
@@ -7,7 +8,12 @@ export default class NoteController {
 
     getHome = async (req, res, next) => {
         try {
-            res.redirect('/user/login-register');
+            const token = req.cookies.token;
+            const refreshToken = req.cookies.refreshToken;
+            if(!token && !refreshToken) {
+                res.redirect('/user/login-register');
+            }
+            res.redirect('note/1');
         } catch (error) {
             next(error);
         }
@@ -45,12 +51,14 @@ export default class NoteController {
                 maxAge: 15 * 24 * 60 * 60 * 1000, // 15 ngày
                 sameSite: "Lax",
             });
-
+            
+            const userInfo = {name: serviceRes.user.name, email: serviceRes.user.email, username: serviceRes.user.username};
             // Trả về thành công và URL để chuyển hướng
             return res.status(200).json({
                 success: "true",
                 message: serviceRes.message,
                 redirectURL: "/note/1",
+                user: JSON.stringify(userInfo),
             });
         } catch (error) {
             return res.status(400).json({ success: "false", message: error.message });

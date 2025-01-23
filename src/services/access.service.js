@@ -25,11 +25,11 @@ export default class UserService {
         }
 
         //create token
-        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '15d' });
+        const token = jwt.sign({ id: userCheck.id, email: userCheck.email }, JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: userCheck.id, email: userCheck.email }, JWT_SECRET, { expiresIn: '15d' });
 
         const message = "Login succesfully"
-        return { success: true, message: message, token: token, refreshToken: refreshToken };
+        return { success: true, message: message, token: token, refreshToken: refreshToken, user: userCheck };
     }
 
     async register(user) {
