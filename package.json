@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "concurrently --prefix \"{server,worker}\" \"nodemon server.js\" \"nodemon src/utils/deleteExpiredSharedNotes.js\"",
     "worker": "nodemon src/utils/deleteExpiredSharedNotes.js",
     "dev": "cross-env NODE_ENV=dev concurrently \"nodemon --inspect server.js\" \"nodemon src/utils/deleteExpiredSharedNotes.js\"",
     "pro": "cross-env NODE_ENV=pro concurrently \"node server.js\" \"node src/utils/deleteExpiredSharedNotes.js\"",
@@ -29,6 +29,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pg-promise": "^11.10.2",
+    "readable-stream": "^4.7.0",
     "session": "^0.1.0"
   },
   "type": "module",

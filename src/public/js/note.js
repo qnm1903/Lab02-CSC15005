@@ -1,3 +1,5 @@
+import { deleteNote, showNotification, createSharedNote, deleteSharedNote } from "./noteAPIModule.js";
+
 // Lấy các phần tử DOM
 const noteList = document.getElementById('note-list');
 const noteContent = document.getElementById('note-content');
@@ -11,6 +13,7 @@ const closeShare = document.getElementById('close-share');
 const closeDelete = document.getElementById('close-delete');
 const addNoteBtn = document.getElementById('add-note-btn');
 const NotesByUserID = JSON.parse(document.getElementById('notes-data').textContent);
+const existingSharedNoteModal = document.getElementById('existing-shared-note-modal');
 
 
 
@@ -50,22 +53,78 @@ function displayNoteContent(noteId) {
   }
 }
 
+// Dùng để copy trong trình duyệt cũ
+function copyToClipboardFallback(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    console.log('Link copied to clipboard:', text);
+    showNotification('Link đã được sao chép vào clipboard!');
+  } catch (error) {
+    console.error('Failed to copy link:', error);
+    showNotification('Không thể sao chép link. Vui lòng thử lại.');
+  } finally {
+    document.body.removeChild(textarea);
+  }
+}
+
 // Mở modal chia sẻ
 function openShareModal(note) {
   shareNoteTitle.textContent = note.title;
-  shareLink.value = `https://example.com/note/${note.id}`;
+  shareLink.value = window.location.href + `/share/${note.id}`;
   shareModal.style.display = 'flex';
+  document.getElementById('copy-link-btn').addEventListener('click', (event) => {
+    event.stopPropagation();
+
+    const linkToCopy = shareLink.value;
+    if(navigator.clipboard) {
+      // Sao chép vào clipboard
+      navigator.clipboard.writeText(linkToCopy)
+      .then(() => {
+        console.log('Link copied to clipboard:', linkToCopy);
+        showNotification('Link đã được sao chép vào clipboard!'); // Thông báo cho người dùng
+      })
+      .catch((error) => {
+        console.error('Failed to copy link:', error);
+        showNotification('Không thể sao chép link. Vui lòng thử lại. Có thể bạn chưa cấp quyền truy cập Clipboard'); // Thông báo lỗi
+      });
+    } else {
+      copyToClipboardFallback(linkToCopy);
+    }
+    
+  });
 }
 
 // Mở modal xác nhận xóa
 function openDeleteModal(note) {
   deleteNoteTitle.textContent = `Bạn có chắc muốn xóa "${note.title}"?`;
   deleteModal.style.display = 'flex';
-  document.getElementById('confirm-delete-btn').onclick = () => {
-    NotesByUserID = NotesByUserID.filter(n => n.id !== note.id);
-    displayNoteList();
-    deleteModal.style.display = 'none';
-  };
+  document.getElementById('confirm-delete-btn').addEventListener('click', async (event) => {
+    try {
+      await deleteNote(note.id);
+      deleteModal.style.display = 'none';
+    } catch (error) {
+      console.error('Lỗi khi xóa ghi chú:', error);
+      alert('Có lỗi xảy ra khi xóa ghi chú. Vui lòng thử lại.');
+    }
+  });
+}
+
+function openExistingSharedNoteModal(note) {
+  deleteNoteTitle.textContent = `Ghi chú này đang được chia sẻ. Bạn có muốn hủy việc chia sẻ ?`;
+  deleteModal.style.display = 'flex';
+  document.getElementById('confirm-delete-btn').addEventListener('click', async (event) => {
+    try {
+      await deleteSharedNote(note.id);
+      deleteModal.style.display = 'none';
+    } catch (error) {
+      console.error('Lỗi khi hủy chia sẻ ghi chú:', error);
+      alert('Có lỗi xảy ra khi hủy chia sẻ ghi chú. Vui lòng thử lại.');
+    }
+  });
 }
 
 // Đóng modal
@@ -96,32 +155,50 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
   // Đóng dropdown khi nhấn ra ngoài
-  window.addEventListener('click', function() {
-    if (currentOpenDropdown) {
-        currentOpenDropdown.style.display = 'none';
-        currentOpenDropdown = null;
+  window.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.dropdown-content');
+    const actionButton = document.querySelector('.action-button');
+
+    // Kiểm tra xem người dùng có nhấn ra ngoài dropdown hay không
+    if (dropdown.style.display === 'block' && !actionButton.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none';
     }
   });
 
-  // const deleteNoteButtons = document.querySelectorAll('.deleteNoteBtn');
-  // deleteNoteButtons.forEach(button => {
-  //     button.addEventListener('click', function() {
-  //         const noteElement = this.closest('.note');
-  //         const noteTitle = noteElement.querySelector('span').innerText;
-  //         if (confirm(`Bạn có chắc chắn muốn xóa ghi chú "${noteTitle}" không?`)) {
-  //             // Gọi API xóa ghi chú
-  //             deleteNote(noteTitle);
-  //         }
-  //     });
-  // });
+  const deleteNoteButtons = document.querySelectorAll('.deleteNoteBtn');
+  deleteNoteButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.stopPropagation();
 
-  // const shareNoteButtons = document.querySelectorAll('.shareNoteBtn');
-  // shareNoteButtons.forEach(button => {
-  //     button.addEventListener('click', function() {
-  //         const noteElement = this.closest('.note');
-  //         const noteTitle = noteElement.querySelector('span').innerText;
-  //         // Gọi API chia sẻ ghi chú
-  //         shareNote(noteTitle);
-  //     });
-  // });
+        const dropdown = this.closest('.dropdown-content');
+        if (dropdown) {
+          dropdown.style.display = 'none';
+        }
+
+        const noteElement = this.closest('.note-item');
+        const note = NotesByUserID.find(note => note.id === noteElement.dataset.id);
+        openDeleteModal(note);
+      });
+  });
+
+  const shareNoteButtons = document.querySelectorAll('.shareNoteBtn');
+  shareNoteButtons.forEach(button => {
+    button.addEventListener('click', async function(event) {
+      event.stopPropagation();
+
+      const dropdown = this.closest('.dropdown-content');
+      if (dropdown) {
+        dropdown.style.display = 'none';
+      }
+
+      const noteElement = this.closest('.note-item');
+      const note = NotesByUserID.find(note => note.id === noteElement.dataset.id);
+      const sharedNoteExisting = await createSharedNote(note.id);
+      if (sharedNoteExisting == false) {
+        openShareModal(note);
+      } else {
+        openExistingSharedNoteModal(note);
+      }
+    });
+  });
 });

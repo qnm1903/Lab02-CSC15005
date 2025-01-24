@@ -1,4 +1,5 @@
 import Note from "../models/note.model.js";
+import SharedNote from '../models/sharedNote.model.js'
 import cryptoHelper from "../utils/cryptoHelper.js";
 import fs from 'fs'
 import crypto from 'crypto'
@@ -8,6 +9,7 @@ import { decrypt } from "dotenv";
 export default class NoteController {
     constructor() {
         this.noteModel = new Note();
+        this.sharedNoteModel = new SharedNote();
     }
 
     getNote = async (req, res) => {
@@ -18,12 +20,7 @@ export default class NoteController {
             if (NotesByUserID && NotesByUserID.success === false) {
                 console.log(NotesByUserID.message);
                 return res.status(500).json("Internal Server Error");
-            }
-
-            if (!NotesByUserID) {
-                console.log("No notes found for the user");
-                return res.status(404).json("No notes found");
-            }      
+            }   
 
             NotesByUserID.forEach( (note) => {
                 // Tạo session key từ master key và salt
@@ -82,18 +79,79 @@ export default class NoteController {
     };
 
     getSharedNote = async (req, res) => {
-        
+        try {
+            const sharedNoteByNoteID = await this.sharedNoteModel.getSharedNoteByNoteID(req.params.id);
+            if (sharedNoteByNoteID) {
+                const noteByNoteID = await this.noteModel.getNoteByID(req.params.id);
+                const sessionKey = cryptoHelper.generateSessionKey(Buffer.from(noteByNoteID.salt, 'hex'));      
+                noteByNoteID.content = cryptoHelper.decryptFile(noteByNoteID.content, sessionKey, Buffer.from(noteByNoteID.iv, 'hex'), Buffer.from(noteByNoteID.authtag,'hex'));
+                res.render('share_note', {noteByNoteID});
+            }
+        } catch (error) {
+            console.log(error.message);
+            res.render('404');
+        }
     };
 
     deleteNote = async (req, res) => {
-        
+        const note_id = req.params.id;
+
+        try {
+            const condition = {
+                column: 'id',
+                value: note_id
+            }
+
+            const result = await this.noteModel.deleteNote(condition);
+
+            res.status(201).send({ result });
+        } catch (error) {
+            console.error('Error deleting note:', error);
+            res.status(500).send('Error deleting note.');
+        }
     };
 
     createSharedNote = async (req, res) => {
+        try {
+
+            // Kiểm tra xem shared_note đã tồn tại chưa
+            const existingSharedNote = await this.sharedNoteModel.getSharedNoteByNoteID(req.params.id);
+
+            if (existingSharedNote) {
+                // Nếu đã tồn tại, trả về thông báo
+                return res.status(200).send({ existing: true, message: 'Ghi chú đã được chia sẻ', sharedNote: existingSharedNote });
+            }
+
+            // Chuẩn bị dữ liệu để thêm vào bảng Shared Note
+            const item = {
+                note_id: req.params.id
+            };
         
+            // Thêm dữ liệu vào bảng Shared Note
+            const result = await this.sharedNoteModel.createSharedNote(item);
+        
+            res.status(201).send({ existing: false, message: 'Shared note created successfully.', result });
+        } catch (error) {
+            console.error('Error creating shared note:', error);
+            res.status(500).send('Error creating shared note.');
+        }
     };
 
     deleteSharedNote = async (req, res) => {
-        
+        const note_id = req.params.id;
+
+        try {
+            const condition = {
+                column: 'note_id',
+                value: note_id
+            }
+
+            const result = await this.sharedNoteModel.deleteSharedNote(condition);
+
+            res.status(201).send({ message: 'Shared note deleted successfully.', result });
+        } catch (error) {
+            console.error('Error deleting note:', error);
+            res.status(500).send('Error deleting note.');
+        }
     };
 }

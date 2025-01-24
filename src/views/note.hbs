@@ -28,7 +28,7 @@
   <div class="modal" id="share-modal">
     <div class="modal-content">
       <span class="close-btn" id="close-share">&times;</span>
-      <h3>Chia sẻ ghi chú</h3>
+      <h3 class="modal-heading">Chia sẻ ghi chú</h3>
       <p id="share-note-title"></p>
       <input placeholder="something" type="text" id="share-link" readonly>
       <button id="copy-link-btn">Sao chép liên kết</button>
@@ -39,16 +39,26 @@
   <div class="modal" id="delete-modal">
     <div class="modal-content">
       <span class="close-btn" id="close-delete">&times;</span>
-      <h3>Xác nhận xóa</h3>
+      <h3 class="modal-heading">Xác nhận xóa</h3>
       <p id="delete-note-title"></p>
       <button id="confirm-delete-btn">Xóa</button>
+    </div>
+  </div>
+
+    <!-- Modal xác nhận xóa -->
+  <div class="modal" id="existing-shared-note-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-existing">&times;</span>
+      <h3 class="modal-heading">Hủy chia sẻ ghi chú</h3>
+      <p id="delete-note-title"></p>
+      <button id="confirm-delete-btn">Hủy chia sẻ</button>
     </div>
   </div>
 
   <script id="notes-data" type="application/json">
     {{{json_stringify NotesByUserID}}}
   </script>
-  <script src="/js/note.js"></script>
+  <script src="/js/note.js" type="module"></script>
   <script src="/js/noteAPIModule.js" type="module"></script>
 </body>
 </html>
