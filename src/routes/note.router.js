@@ -11,7 +11,7 @@ export default class NoteRoutes {
 
     initRoute() {
         this.router.use(authenticate);
-        this.router.get('/:id', this.noteController.getNote);
+        this.router.get('/', this.noteController.getNote);
         this.router.get('/share/:id', this.noteController.getSharedNote);
     }
 

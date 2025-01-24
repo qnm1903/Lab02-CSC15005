@@ -88,9 +88,9 @@ export default (schema) => {
             }
         },
 
-        native: async (query) => {
+        native: async (query, params) => {
             try {
-                return await db.any(query);
+                return await db.any(query, params);
             } catch (error) {
                 console.log("Error executing native query: ", query);
                 throw new Error("Error query");

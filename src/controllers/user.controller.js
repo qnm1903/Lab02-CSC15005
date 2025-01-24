@@ -13,7 +13,7 @@ export default class NoteController {
             if(!token && !refreshToken) {
                 return res.redirect('/user/login-register');
             }
-            return res.redirect('note/1');
+            return res.redirect('note');
         } catch (error) {
             next(error);
         }
@@ -57,7 +57,7 @@ export default class NoteController {
             return res.status(200).json({
                 success: "true",
                 message: serviceRes.message,
-                redirectURL: "/note/1",
+                redirectURL: "/note",
                 user: JSON.stringify(userInfo),
             });
         } catch (error) {

@@ -33,6 +33,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@faker-js/faker": "^9.4.0",
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.9"
   }

@@ -2,6 +2,8 @@ import Note from "../models/note.model.js";
 import cryptoHelper from "../utils/cryptoHelper.js";
 import fs from 'fs'
 import crypto from 'crypto'
+import { faker } from '@faker-js/faker';
+import { decrypt } from "dotenv";
 
 export default class NoteController {
     constructor() {
@@ -10,7 +12,28 @@ export default class NoteController {
 
     getNote = async (req, res) => {
         try {
-            res.render('note');
+            const userID = req.user.id;
+            const NotesByUserID = await this.noteModel.getNotesByUserID(userID);
+
+            if (NotesByUserID && NotesByUserID.success === false) {
+                console.log(NotesByUserID.message);
+                return res.status(500).json("Internal Server Error");
+            }
+
+            if (!NotesByUserID) {
+                console.log("No notes found for the user");
+                return res.status(404).json("No notes found");
+            }      
+
+            NotesByUserID.forEach( (note) => {
+                // Tạo session key từ master key và salt
+                const sessionKey = cryptoHelper.generateSessionKey(Buffer.from(note.salt, 'hex'));      
+                note.content = cryptoHelper.decryptFile(note.content, sessionKey, Buffer.from(note.iv, 'hex'), Buffer.from(note.authtag,'hex'));
+            });
+
+            res.render('note', {
+                NotesByUserID
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).json("Internal Server Error");
@@ -33,14 +56,15 @@ export default class NoteController {
             const sessionKey = cryptoHelper.generateSessionKey(Buffer.from(salt, 'hex'));
         
             // Mã hóa file PDF
-            const { encryptedFile, iv } = cryptoHelper.encryptFile(fileBuffer, sessionKey);
+            const { encryptedFile, iv, authTag } = cryptoHelper.encryptFile(fileBuffer, sessionKey);
         
             // Chuẩn bị dữ liệu để thêm vào bảng Note
             const item = {
-                user_id: "1", // Lấy userID từ request body
-                title: "Nội dung 1",
+                user_id: req.user.id, // Lấy userID từ request body
+                title: faker.book.title(),
                 content: encryptedFile,  // Lưu file PDF đã mã hóa dưới dạng BYTEA
-                salt: salt,              // Lưu salt dạng hex
+                salt: salt,              // Lưu salt dạng hex,
+                authtag: authTag.toString('hex'),
                 iv: iv.toString('hex'),  // Lưu IV dạng hex
             };
         
