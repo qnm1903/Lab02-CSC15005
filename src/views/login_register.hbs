@@ -7,6 +7,7 @@
                 <h1>Login</h1>
                 <input type="text" name="username" class="username" placeholder="Username" required>
                 <input type="password" name="password" class="password" placeholder="Password" required>
+                <div class="remember-div"><input type="checkbox" name="remember" id="remember">Remember me?</div>
                 <span class="err err-signIn" style="display: none;"></span>
                 <button type="submit" id="signIn-btn">
                     Sign in
@@ -164,6 +165,7 @@
                 const formData = {
                     username: $('.login .username').val(),
                     password: $('.login .password').val(),
+                    remember: $('#remember').prop('checked'),
                 }
 
                 const res = await api.post('/user/login', formData);
@@ -261,6 +263,20 @@
         width: 50%;
         z-index: 2;
         opacity: 1;
+    }
+
+    .login .remember-div {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #remember {
+        width: 18px;
+        height: 18px;
     }
 
     .signContainer.active .login {

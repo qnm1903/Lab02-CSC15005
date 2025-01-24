@@ -10,7 +10,7 @@ export default class NoteController {
         try {
             const token = req.cookies.token;
             const refreshToken = req.cookies.refreshToken;
-            if(!token && !refreshToken) {
+            if (!token && !refreshToken) {
                 return res.redirect('/user/login-register');
             }
             return res.redirect('note');
@@ -48,11 +48,11 @@ export default class NoteController {
             res.cookie("refreshToken", serviceRes.refreshToken, {
                 httpOnly: true,
                 secure: true,
-                maxAge: 15 * 24 * 60 * 60 * 1000, // 15 ngày
+                maxAge: user.remember ? 15 * 24 * 60 * 60 * 1000 : undefined, // 15 ngày
                 sameSite: "Lax",
             });
-            
-            const userInfo = {name: serviceRes.user.name, email: serviceRes.user.email, username: serviceRes.user.username};
+
+            const userInfo = { name: serviceRes.user.name, email: serviceRes.user.email, username: serviceRes.user.username };
             // Trả về thành công và URL để chuyển hướng
             return res.status(200).json({
                 success: "true",
@@ -93,16 +93,16 @@ export default class NoteController {
                 maxAge: 60 * 60 * 1000.
             })
 
-            res.json({success: true, message: "Token refreshed"});
+            res.json({ success: true, message: "Token refreshed" });
         } catch (error) {
             return res.status(400).json({ success: false, message: error.message });
         }
     }
 
     logout = async (req, res, next) => {
-        res.clearCookie('token');
-        res.clearCookie('refreshToken');
+        await res.clearCookie('token');
+        await res.clearCookie('refreshToken');
 
-        return res.redirect('/user/login-register');
+        return res.json({ success: true, redirectURL: '/user/login-register' });
     }
 }
