@@ -61,8 +61,8 @@ export const deleteNote = async (noteId) => {
     try {
         const response = await axios.delete(`/api/delete-note/${noteId}`);
         if (response.data.result.success) {
-            alert(response.data.result.message);
-            window.location.reload();
+            showNotification(response.data.result.message);
+            setTimeout(window.location.reload(),2500);
         } else {
             alert(response.data.result.message);
         }
