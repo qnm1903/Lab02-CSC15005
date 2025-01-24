@@ -1,7 +1,6 @@
 // Các hàm hỗ trợ access (Đăng nhập, đăng ký)
 'use strict'
 
-import express from 'express';
 import UserModel from "../models/user.model.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -26,11 +25,11 @@ export default class UserService {
         }
 
         //create token
-        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '15d' });
+        const token = jwt.sign({ id: userCheck.id, email: userCheck.email }, JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: userCheck.id, email: userCheck.email }, JWT_SECRET, { expiresIn: '15d' });
 
         const message = "Login succesfully"
-        return { success: true, message: message, token: token, refreshToken: refreshToken };
+        return { success: true, message: message, token: token, refreshToken: refreshToken, user: userCheck };
     }
 
     async register(user) {

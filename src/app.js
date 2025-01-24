@@ -2,7 +2,7 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
-import session from 'express-session'
+import session from 'express-session';
 import configViewEngine from './configs/viewEngine.js';
 import path from "path";
 

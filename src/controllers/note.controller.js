@@ -12,7 +12,7 @@ export default class NoteController {
 
     getNote = async (req, res) => {
         try {
-            const userID = "1";
+            const userID = req.user.id;
             const NotesByUserID = await this.noteModel.getNotesByUserID(userID);
 
             if (NotesByUserID && NotesByUserID.success === false) {
@@ -60,7 +60,7 @@ export default class NoteController {
         
             // Chuẩn bị dữ liệu để thêm vào bảng Note
             const item = {
-                user_id: "1", // Lấy userID từ request body
+                user_id: req.user.id, // Lấy userID từ request body
                 title: faker.book.title(),
                 content: encryptedFile,  // Lưu file PDF đã mã hóa dưới dạng BYTEA
                 salt: salt,              // Lưu salt dạng hex,

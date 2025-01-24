@@ -14,7 +14,7 @@ export default class APIRoutes {
     }
 
     initRoute() {
-        this.router.use('/', authenticate);
+        this.router.use(authenticate);
         this.router.post('/upload', (req, res, next) => {
             upload.single('pdfFile')(req, res, (err) => {
               if (err) {

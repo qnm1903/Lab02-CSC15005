@@ -53,7 +53,7 @@
     </div>
 
     <script type="module">
-        import api from './utils/api.js'
+        import api from '/utils/api.js'
         $(document).ready(function () {
             //Animation
             const container = $('.signContainer');
@@ -70,7 +70,7 @@
 
             //Validation register name
             $('.register .name').change(function () {
-                const regex = /[^a-zA-Z0-9\s]/;
+                const regex = /[0-9!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`']/;
                 const name = $(this).val();
                 if (regex.test(name)) {
                     $('.err-name').show().html("Invalid Name!");
@@ -170,6 +170,7 @@
                 if (!res.success) {
                     $('.err-signIn').show().html(res.message).css({ color: 'red' });
                 } else {
+                    localStorage.setItem('user', res.user);
                     window.location.href = res.redirectURL;
                     $('.err-signIn').show().html(res.message).css({ color: '#AEEA94' });
                 }

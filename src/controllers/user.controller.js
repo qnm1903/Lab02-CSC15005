@@ -1,8 +1,22 @@
+import { type } from "os";
 import UserService from "../services/access.service.js";
 
 export default class NoteController {
     constructor() {
         this.userService = new UserService();
+    }
+
+    getHome = async (req, res, next) => {
+        try {
+            const token = req.cookies.token;
+            const refreshToken = req.cookies.refreshToken;
+            if(!token && !refreshToken) {
+                return res.redirect('/user/login-register');
+            }
+            return res.redirect('note');
+        } catch (error) {
+            next(error);
+        }
     }
 
     getLoginRegister = async (req, res, next) => {
@@ -21,7 +35,7 @@ export default class NoteController {
             const user = req.body;
             const serviceRes = await this.userService.login(user);
             if (!serviceRes.success) {
-                return res.status(401).json({ success: "false", message: serviceRes.message });
+                return res.status(401).json({ success: false, message: serviceRes.message });
             }
             // Lưu token vào cookie
             res.cookie("token", serviceRes.token, {
@@ -37,15 +51,17 @@ export default class NoteController {
                 maxAge: 15 * 24 * 60 * 60 * 1000, // 15 ngày
                 sameSite: "Lax",
             });
-
+            
+            const userInfo = {name: serviceRes.user.name, email: serviceRes.user.email, username: serviceRes.user.username};
             // Trả về thành công và URL để chuyển hướng
             return res.status(200).json({
                 success: "true",
                 message: serviceRes.message,
-                redirectURL: "/note/1",
+                redirectURL: "/note",
+                user: JSON.stringify(userInfo),
             });
         } catch (error) {
-            return res.status(400).json({ success: "false", message: error.message });
+            return res.status(400).json({ success: false, message: error.message });
         }
     }
 
@@ -87,6 +103,6 @@ export default class NoteController {
         res.clearCookie('token');
         res.clearCookie('refreshToken');
 
-        return res.status(200).json({success: true, message: 'Logged out succesfully'}); 
+        return res.redirect('/user/login-register');
     }
 }
