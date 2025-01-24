@@ -24,7 +24,7 @@ export default class APIRoutes {
               next();
             });
           }, this.noteController.createNote);
-        this.router.post('/delete-note/:id', this.noteController.deleteNote);
+        this.router.delete('/delete-note/:id', this.noteController.deleteNote);
         this.router.post('/create-shared-note/:id', this.noteController.createSharedNote);
         this.router.delete('/delete-shared-note/:id', this.noteController.deleteSharedNote);
     }

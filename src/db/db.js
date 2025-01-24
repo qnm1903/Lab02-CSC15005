@@ -79,7 +79,9 @@ export default (schema) => {
 
         delete: async (tbName, condition) => {
             try {
-                const query = `DELETE FROM "${schema}"."${tbName}" WHERE ${condition.column} = ${condition.value}`;
+                const isString = typeof condition.value === 'string';
+
+                const query = `DELETE FROM "${schema}"."${tbName}" WHERE ${condition.column} = ${isString ? `'${condition.value}'` : condition.value}`;
                 await db.none(query);
                 return { success: true };
             } catch (error) {

@@ -60,6 +60,17 @@ const createNoteTable =
         );
     `;
 
+const createSharedNoteTable =
+    `
+        CREATE TABLE IF NOT EXISTS shared_note (
+            id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+            note_id UUID NOT NULL UNIQUE REFERENCES note(id) ON DELETE CASCADE,
+            expiry_date TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '7 days'),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+
 // Table creation function
 const createTable = async (Query) => {
     const createTableQuery = Query;
@@ -80,6 +91,7 @@ db.connect()
         await enableUUIDExtension();
 
         await createTable(createNoteTable);
+        await createTable(createSharedNoteTable);
     })
     .catch((error) => console.error('Database connection error:', error));
 

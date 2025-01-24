@@ -3,9 +3,9 @@ import {db, pgp} from '../configs/pgp.config.js';
 async function deleteExpiredSharedNotes() {
     try {
         const result = await db.query(`
-            DELETE FROM shared_note
-            WHERE expiry_date <= NOW()
-            RETURNING id
+            DELETE FROM "public"."shared_note"
+            WHERE "expiry_date" <= NOW()
+            returning id
         `);
 
         if (result.length > 0) {
