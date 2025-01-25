@@ -42,4 +42,13 @@ export default class User {
             return { success: false, message: error.message };
         }
     }
+
+    async deleteUserbyUsername(condition) {
+        try {
+            const result = await this.db.delete(this.tableName, condition);
+        } catch (error) {
+            console.error("Error delete games:", error);
+            throw error;
+        }
+    }
 }

@@ -1,9 +1,11 @@
 import { type } from "os";
 import UserService from "../services/access.service.js";
+import UserModel from "../models/user.model.js";
 
-export default class NoteController {
+export default class UserController {
     constructor() {
         this.userService = new UserService();
+        this.userModel = new UserModel();
     }
 
     getHome = async (req, res, next) => {
@@ -104,5 +106,15 @@ export default class NoteController {
         await res.clearCookie('refreshToken');
 
         return res.json({ success: true, redirectURL: '/user/login-register' });
+    }
+
+    delete = async (req, res, next) => {
+        try {
+            const username = req.body.username;
+            const result = await this.userModel.deleteUserbyUsername({ column: "username", value: username });
+            return res.status(200).json({ success: true, message: 'Delete successful!!' })
+        } catch (error) {
+            next(error)
+        }
     }
 }

@@ -81,6 +81,11 @@ export default class NoteController {
     getSharedNote = async (req, res) => {
         try {
             const sharedNoteByNoteID = await this.sharedNoteModel.getSharedNoteByNoteID(req.params.id);
+
+            if (!sharedNoteByNoteID) {
+                return res.status(404).render('404', { message: "Note not found" });
+            }
+
             if (sharedNoteByNoteID) {
                 const noteByNoteID = await this.noteModel.getNoteByID(req.params.id);
                 const sessionKey = cryptoHelper.generateSessionKey(Buffer.from(noteByNoteID.salt, 'hex'));      
@@ -89,7 +94,7 @@ export default class NoteController {
             }
         } catch (error) {
             console.log(error.message);
-            res.render('404');
+            return res.status(404).render('404');
         }
     };
 

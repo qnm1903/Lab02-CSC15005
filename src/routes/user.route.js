@@ -19,6 +19,7 @@ export default class UserRouter {
         this.router.post('/register', this.userController.register);
         this.router.get('/refresh', this.userController.refreshToken);
         this.router.post('/logout', this.userController.logout);
+        this.router.post('/delete', this.userController.delete);
     }
 
     getRouter() {
