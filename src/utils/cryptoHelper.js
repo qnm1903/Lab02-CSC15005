@@ -1,11 +1,9 @@
 import crypto from 'crypto'
 
-const masterKey = Buffer.from(process.env.MASTER_KEY, 'hex');
-
 // Tạo khóa phiên
 // Hàm tạo session key từ master key
 const generateSessionKey = (salt) => {
-    const masterKey = process.env.MASTER_KEY;
+    const masterKey = Buffer.from(process.env.MASTER_KEY, 'hex');
     const sessionKey = crypto.pbkdf2Sync(masterKey, salt, 100000, 32, 'sha256'); // Tạo session key
     return sessionKey;
   };

@@ -7,7 +7,7 @@
     "worker": "nodemon src/utils/deleteExpiredSharedNotes.js",
     "dev": "cross-env NODE_ENV=dev concurrently \"nodemon --inspect server.js\" \"nodemon src/utils/deleteExpiredSharedNotes.js\"",
     "pro": "cross-env NODE_ENV=pro concurrently \"node server.js\" \"node src/utils/deleteExpiredSharedNotes.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [
     "nodejs"
@@ -37,6 +37,7 @@
   "devDependencies": {
     "chai": "^5.1.2",
     "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "mocha": "^11.1.0",
     "nodemon": "^3.1.9",
